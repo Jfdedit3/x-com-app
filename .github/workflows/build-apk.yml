@@ -5,7 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:  # Permet de lancer manuellement
+  workflow_dispatch:  # Permet de lancer manuellement depuis l'onglet Actions
 
 jobs:
   build:
@@ -25,22 +25,25 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Grant execute permission for gradlew
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Create Gradle Wrapper (if missing)
         working-directory: android
         run: |
-          # Créer le wrapper Gradle s'il n'existe pas
           if [ ! -f gradlew ]; then
-            gradle wrapper --gradle-version 8.2
+            gradle wrapper --gradle-version 8.4
           fi
           chmod +x gradlew
 
       - name: Build Debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleDebug --stacktrace --no-daemon
 
-      - name: Upload APK
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: XComApp-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/apk/debug/*.apk
           retention-days: 30
+          if-no-files-found: error
