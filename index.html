@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="Application pour afficher X.com">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="https://abs.twimg.com/favicons/twitter.3.ico">
+    <title>X.com App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 400px;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 24px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: #000;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        p {
+            color: #71767b;
+            margin-bottom: 32px;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        .btn {
+            display: inline-block;
+            background: #1d9bf0;
+            color: #fff;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 9999px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+            width: 100%;
+            max-width: 300px;
+        }
+        .btn:hover {
+            background: #1a8cd8;
+        }
+        .btn:active {
+            background: #1871b8;
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #536471;
+            margin-top: 12px;
+            color: #eff3f4;
+        }
+        .btn-secondary:hover {
+            background: rgba(239, 243, 244, 0.1);
+        }
+        .footer {
+            position: absolute;
+            bottom: 24px;
+            color: #536471;
+            font-size: 13px;
+        }
+        /* Fullscreen mode styles */
+        .fullscreen-mode body {
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">𝕏</div>
+        <h1>X.com</h1>
+        <p>Ouvre X (anciennement Twitter) directement dans ton navigateur ou installe cette app pour un accès rapide.</p>
+        
+        <a href="https://x.com" class="btn" id="openX">Ouvrir X.com</a>
+        <button class="btn btn-secondary" id="installBtn" style="display:none;">Installer l'application</button>
+    </div>
+    
+    <div class="footer">
+        App non officielle • GitHub Pages
+    </div>
+
+    <script>
+        // Redirection automatique optionnelle (décommenter si tu veux)
+        // window.location.href = "https://x.com";
+
+        // PWA Install prompt
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'inline-block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installBtn.style.display = 'none';
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        // Si l'app est déjà installée (standalone), rediriger automatiquement
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+            window.location.href = "https://x.com";
+        }
+
+        // Bouton principal
+        document.getElementById('openX').addEventListener('click', (e) => {
+            // Ouvre en même onglet pour une expérience app-like
+            // e.preventDefault(); // décommente si tu veux contrôler
+        });
+    </script>
+</body>
+</html>
